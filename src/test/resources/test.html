@@ -1,0 +1,77 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Chat</title>
+<!-- <script type="text/javascript" src="/MyHomePage/jquery-2.0.3.min.js"></script> -->
+</head>
+<body>
+    <input type="text" id="url" value="ws://localhost:9999/ws"/>
+    <br>
+    <input type="button" value="Connect" onclick="connectChatServer()" />
+    <br>
+    <input type="file" id="filename" />
+    <br>
+    <input type="button" value="Upload" onclick="sendFile()" />
+    <br>
+    <input type="text" id="texttext" />
+    <br>
+    <input type="button" value="text" onclick="sendText()" />
+    <br>
+    <input type="button" value="close" onclick="closeWS()" />
+    <script>
+        var ws;
+
+        function connectChatServer() {
+            var text = document.getElementById('url').value;
+            ws = new WebSocket(
+                    text);
+
+            ws.binaryType = "arraybuffer";
+            ws.onopen = function() {
+                // alert("Connected.")
+            };
+
+            ws.onmessage = function(evt) {
+                // alert(evt.msg);
+            };
+
+            ws.onclose = function() {
+                // alert("Connection is closed...");
+            };
+            ws.onerror = function(e) {
+                // alert(e.msg);
+            }
+
+        }
+
+        function sendFile() {
+            var file = document.getElementById('filename').files[0];
+            var reader = new FileReader();
+            var rawData = new ArrayBuffer();      
+
+            reader.loadend = function() {
+
+            }
+            reader.onload = function(e) {
+                rawData = e.target.result;
+                ws.send(rawData);
+            }
+
+            reader.readAsArrayBuffer(file);
+
+        }
+
+        function sendText() {
+            var text = document.getElementById('texttext').value;
+            ws.send(text);
+        }
+
+        function closeWS() {
+            ws.close();
+
+        }
+
+
+    </script>
+</body>
+</html>
